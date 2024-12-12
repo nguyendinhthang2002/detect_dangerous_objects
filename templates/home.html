@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Object Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Phát hiện vật thể nguy hiểm</h1>
+        <form method="POST" enctype="multipart/form-data" class="upload-form">
+            <input type="file" name="image" accept="image/*" required>
+            <button type="submit">Tải lên</button>
+        </form>
+
+        <!-- <form method="POST" action="{{ url_for('home') }}">
+            <button type="submit" name="webcam" class="upload-form">Bật Webcam</button>
+        </form> -->
+
+        <form method="GET" action="{{ url_for('stream_webcam') }}">
+            <button type="submit" class="upload-form">Bật Webcam</button>
+        </form>
+
+        <div class="result-container">
+            <div class="result-image">
+                <h3>Kết quả</h3>
+                {% if filename %}
+                    <img src="{{ url_for('processed_image', filename=filename) }}" alt="Processed Image">
+                {% endif %}
+            </div>
+            <div class="result-detected">
+                <h3>Kết quả phát hiện</h3>
+                {% if detected_objects %}
+                    <p>Phát hiện có vật thể nguy hiểm</p>
+                    <ul>
+                        {% for obj in detected_objects %}
+                            <li>
+                                Vật thể có thể là: 
+                                <strong>
+                                    {% if obj.name == 'gun' %}
+                                        Súng
+                                    {% elif obj.name == 'knife' %}
+                                        Dao
+                                    {% elif obj.name == 'grenade' %}
+                                        Lựu đạn
+                                    {% else %}
+                                        {{ obj.name }}
+                                    {% endif %}
+                        </strong><br>
+                                Độ tin cậy: {{ obj.confidence | round(2) }}%
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>Không có vật thể nào được phát hiện</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+
